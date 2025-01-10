@@ -56,5 +56,37 @@ public class MonteCarloSimulation {
 													Random rnd,
 													StatCollector stat) {
 		//Write your code here
+		final double Z_VALUE = 1.96;
+
+
+		//1) On commence par réaliser N init simulations de l’expérience (voir la méthode simulate-NRuns).
+		simulateNRuns(exp, initialNumberOfRuns, rnd, stat);
+
+
+		// 2) À partir des données récoltées on calcule une estimation du nombre N de réalisations
+		// à générer aﬁn d’obtenir un intervalle de conﬁance dont la demi-largeur ne dépasse
+		// pas Δ max (voir la page 48 du cours). Cette valeur de N est ensuite arrondie, vers le
+		// haut, au plus proche multiple de N add .
+		double halfWidth = stat.getConfidenceIntervalHalfWidth(level);
+		long NEstimate = (long) Math.ceil(Math.pow(Z_VALUE, 2) * Math.pow(stat.getStandardDeviation(), 2) / Math.pow(halfWidth, 2));
+		NEstimate = (NEstimate / additionalNumberOfRuns) * additionalNumberOfRuns;
+		
+
+		// 3) La simulation est poursuivie jusqu’à atteindre N réalisations de l’expérience.
+		if(NEstimate > initialNumberOfRuns) {
+			simulateNRuns(exp, NEstimate - initialNumberOfRuns, rnd, stat);
+		}
+
+		// 4) Si la demi-largeur de l’intervalle de conﬁance, calculée sur la base de ces N réalisations,
+		// est inférieure ou égale à Δ max le processus s’arrête. Sinon N add simulations supplé-
+		// mentaires sont eﬀectuées avant de recalculer un nouvel intervalle de conﬁance et de
+		// retester la condition d’arrêt. Ce processus est répété jusqu’à ce que la condition d’arrêt
+		// soit satisfaite.
+		halfWidth = stat.getConfidenceIntervalHalfWidth(level);
+		while (halfWidth > maxHalfWidth) {
+			simulateNRuns(exp, additionalNumberOfRuns, rnd, stat);
+			halfWidth = stat.getConfidenceIntervalHalfWidth(level);
+		}
+
 	}
 }
