@@ -23,21 +23,14 @@ public class SameBirthdayExperiment implements Experiment {
         this.frequencies = new int[Y];
     }
 
-    private int randomDay(Random rnd) {
-        return rnd.nextInt(0, Y);
-    }
-
     @Override
     public double execute(Random rnd) {
-        // On remet à zéro le tableau des fréquences
         for(int i = 0; i < Y; ++i)
             frequencies[i] = 0;
 
-        for(int i = 0; i < K; ++i) {
-            if(++frequencies[randomDay(rnd)] >= M)
+        for(int i = 0; i < K; ++i)
+            if(++frequencies[rnd.nextInt(Y)] >= M)
                 return 1.;
-        }
-
         return 0.;
     }
 }

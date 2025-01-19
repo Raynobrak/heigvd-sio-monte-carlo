@@ -57,11 +57,9 @@ public class MonteCarloSimulation {
 													StatCollector stat) {
 		//Write your code here
 		final double Z_VALUE = 1.96;
-
-
+		
 		//1) On commence par réaliser N init simulations de l’expérience (voir la méthode simulate-NRuns).
 		simulateNRuns(exp, initialNumberOfRuns, rnd, stat);
-
 
 		// 2) À partir des données récoltées on calcule une estimation du nombre N de réalisations
 		// à générer aﬁn d’obtenir un intervalle de conﬁance dont la demi-largeur ne dépasse
@@ -70,7 +68,6 @@ public class MonteCarloSimulation {
 		double halfWidth = stat.getConfidenceIntervalHalfWidth(level);
 		long NEstimate = (long) Math.ceil(Math.pow(Z_VALUE, 2) * Math.pow(stat.getStandardDeviation(), 2) / Math.pow(halfWidth, 2));
 		NEstimate = (NEstimate / additionalNumberOfRuns) * additionalNumberOfRuns;
-		
 
 		// 3) La simulation est poursuivie jusqu’à atteindre N réalisations de l’expérience.
 		if(NEstimate > initialNumberOfRuns) {
@@ -87,6 +84,5 @@ public class MonteCarloSimulation {
 			simulateNRuns(exp, additionalNumberOfRuns, rnd, stat);
 			halfWidth = stat.getConfidenceIntervalHalfWidth(level);
 		}
-
 	}
 }
